@@ -60,7 +60,6 @@ public class BookDaoJdbc implements BookDao {
     }
 
 
-
     @Override
     public List<Book> getAllBooks() {
         return jdbc.query(SELECT_ALL_BOOK, new BookMapper());

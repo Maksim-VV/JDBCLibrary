@@ -21,7 +21,6 @@ public class ShellServiceImpl implements ShellService {
     }
 
 
-
     @Override
     public String addBook(String bookName, String author, String genre) {
         if (!addNewBook(bookName, author, genre)) {
@@ -46,7 +45,6 @@ public class ShellServiceImpl implements ShellService {
         }
         return book.toString();
     }
-
 
     @Override
     public String bookByAuthor(String author) {
