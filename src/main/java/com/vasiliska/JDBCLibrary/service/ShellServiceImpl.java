@@ -1,7 +1,11 @@
 package com.vasiliska.JDBCLibrary.service;
 
-import com.vasiliska.JDBCLibrary.dao.BookDao;
+import com.vasiliska.JDBCLibrary.dao.authors.AuthorDao;
+import com.vasiliska.JDBCLibrary.dao.books.BookDao;
+import com.vasiliska.JDBCLibrary.dao.genres.GenreDao;
+import com.vasiliska.JDBCLibrary.domain.Author;
 import com.vasiliska.JDBCLibrary.domain.Book;
+import com.vasiliska.JDBCLibrary.domain.Genre;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +18,13 @@ import java.util.List;
 public class ShellServiceImpl implements ShellService {
 
     BookDao dao;
+    GenreDao genreDao;
+    AuthorDao authorDao;
 
     @Autowired
-    public ShellServiceImpl(BookDao dao) {
+    public ShellServiceImpl(BookDao dao, GenreDao genreDao, AuthorDao authorDao) {
+        this.authorDao = authorDao;
+        this.genreDao = genreDao;
         this.dao = dao;
     }
 
@@ -83,34 +91,47 @@ public class ShellServiceImpl implements ShellService {
     }
 
 
-    public boolean addNewBook(String name, String author, String genre) {
-        Book book = Book.builder().name(name).authorId(getIdAuthor(author)).genreId(getIdGenre(genre)).build();
+    public boolean addNewBook(String name, String authorName, String genreName) {
+        val author = new Author(getIdAuthor(authorName), authorName);
+        val genre = new Genre(getIdGenre(genreName), genreName);
+        Book book = new Book(name, author, genre);
+
         dao.insertBook(book);
         return true;
     }
 
     public boolean deleteBook(String name) {
         Book book = dao.getBookByName(name);
+
         if (book == null || book.getName().isEmpty()) {
             System.out.println("Нет такой книги!");
             return false;
         }
-        val countAuthor = dao.getCountBookByAuthor(book.getAuthorId());
-        if (countAuthor == 1) {
-            if (!dao.delAuthor(book.getAuthorId())) {
-                log.info("Сan't find the author's id");
-            }
-        }
-        val countGenre = dao.getCountBookByGenre(book.getGenreId());
-        if (countGenre == 1) {
-            if (!dao.delGenre(book.getGenreId())) {
-                log.info("Сan't find the genre's id");
-            }
-        }
-        if (!dao.delBook(name)) {
+        val countAuthor = dao.getCountBookByAuthor(book.getAuthor().getAuthorId());
+        val countGenre = dao.getCountBookByGenre(book.getGenre().getGenreId());
+
+        if (!dao.delBook(name))
+        {
             log.info("Book " + name + " cannot be deleted!!!");
+            return false;
         }
-        log.info("Book " + name + " has been removed!");
+        else 
+        {
+            log.info("Book " + name + " has been removed!");
+            if (countAuthor == 1)
+            {
+                if (!authorDao.delAuthor(book.getAuthor().getAuthorId())) {
+                    log.info("Сan't find the author's id");
+                }
+            }
+
+            if (countGenre == 1)
+            {
+                if (!genreDao.delGenre(book.getGenre().getGenreId())) {
+                    log.info("Сan't find the genre's id");
+                }
+            }
+       }
         return true;
     }
 
@@ -119,17 +140,15 @@ public class ShellServiceImpl implements ShellService {
         return book;
     }
 
-
-    public int getIdAuthor(String name) {
-        int idAuthor = dao.getIdAuthor(name);
+    public long getIdAuthor(String name) {
+        long idAuthor = authorDao.getIdAuthor(name);
         return idAuthor;
     }
 
-    public int getIdGenre(String name) {
-        int idGenre = dao.getIdGenre(name);
+    public long getIdGenre(String name) {
+        long idGenre = genreDao.getIdGenre(name);
         return idGenre;
     }
-
 
 }
 

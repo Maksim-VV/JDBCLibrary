@@ -1,17 +1,35 @@
 package com.vasiliska.JDBCLibrary.domain;
 
-import lombok.Builder;
 import lombok.Data;
-import lombok.ToString;
 
 @Data
-@ToString(exclude = {"id", "authorId", "genreId"}, includeFieldNames=false)
-@Builder
 public class Book {
-    int id;
+    long id;
     String name;
-    int genreId;
-    int authorId;
-    String authorName;
-    String genreName;
+
+    Genre genre;
+    Author author;
+
+    public Book(long id, String name, Author author, Genre genre) {
+        this.id = id;
+        this.name = name;
+        this.genre = genre;
+        this.author = author;
+    }
+
+    public Book(String name, Author author, Genre genre) {
+        this.name = name;
+        this.genre = genre;
+        this.author = author;
+    }
+
+    public Book() {
+
+    }
+
+    @Override
+    public String toString() {
+        return name + " " + author.getAuthorName() + " " + genre.getGenreName();
+    }
+
 }

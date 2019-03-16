@@ -2,9 +2,11 @@ package com.vasiliska.JDBCLibrary.shell;
 
 import com.vasiliska.JDBCLibrary.service.ShellService;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+
 
 @ShellComponent
 public class Commands {
@@ -15,8 +17,6 @@ public class Commands {
     public Commands(ShellService shellService) {
         this.shellService = shellService;
     }
-
-
 
     @ShellMethod("Find book by name")
     public String findbook(@ShellOption String bookName) {

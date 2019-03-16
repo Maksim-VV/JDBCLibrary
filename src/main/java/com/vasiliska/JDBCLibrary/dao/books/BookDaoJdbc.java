@@ -1,4 +1,4 @@
-package com.vasiliska.JDBCLibrary.dao;
+package com.vasiliska.JDBCLibrary.dao.books;
 
 import com.vasiliska.JDBCLibrary.domain.Book;
 import lombok.extern.slf4j.Slf4j;
@@ -46,19 +46,10 @@ public class BookDaoJdbc implements BookDao {
     final String SEARCH_BOOK_BY_GENRE_ID = "select count(*) from books where genreId = :genreId";
 
     final String DELETE_BOOK = "delete from books where name = :nameBook";
-    final String DELETE_AUTHOR = "delete from authors where authorId = :authorId";
-    final String DELETE_GENRE = "delete from genres where genreId = :genreId";
-
-    final String INSERT_AUTHOUR = "insert into authors (`nameAuthor`) values (:nameAuthor);";
-    final String SEARCH_AUTHOR_ID_BY_NAME = "select authorId from authors where nameAuthor = :nameAuthor";
-
-    final String INSERT_GENRE = "insert into genres (`nameGenre`) values (:nameGenre);";
-    final String SELECT_GENRE_ID_BY_NAME = "select genreId from genres where nameGenre = :nameGenre";
 
     public BookDaoJdbc(NamedParameterJdbcOperations jdbcOperations) {
         jdbc = jdbcOperations;
     }
-
 
     @Override
     public List<Book> getAllBooks() {
@@ -69,8 +60,8 @@ public class BookDaoJdbc implements BookDao {
     public void insertBook(Book book) {
         final HashMap<String, Object> params = new HashMap<>(1);
         params.put("nameBook", book.getName());
-        params.put("authorId", book.getAuthorId());
-        params.put("genreId", book.getGenreId());
+        params.put("authorId", book.getAuthor().getAuthorId());
+        params.put("genreId", book.getGenre().getGenreId());
         jdbc.update(INSERT_BOOK, params);
     }
 
@@ -78,7 +69,9 @@ public class BookDaoJdbc implements BookDao {
     public Book getBookByName(String name) {
         final HashMap<String, Object> params = new HashMap<>(1);
         params.put("nameBook", name);
-        Book book = Book.builder().name("").genreName("").authorName("").build();
+
+        Book book = new Book();
+
         try {
             book = jdbc.queryForObject(SEARCH_BOOK_BY_NAME, params, new BookMapper());
         } catch (EmptyResultDataAccessException e) {
@@ -124,72 +117,7 @@ public class BookDaoJdbc implements BookDao {
     }
 
     @Override
-    public boolean delAuthor(int authorId) {
-        SqlParameterSource namedParameters = new MapSqlParameterSource("authorId", authorId);
-        int status = jdbc.update(DELETE_AUTHOR, namedParameters);
-        if (status != 0) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean delGenre(int genreId) {
-        SqlParameterSource namedParameters = new MapSqlParameterSource("genreId", genreId);
-        int status = jdbc.update(DELETE_GENRE, namedParameters);
-        if (status != 0) {
-            return true;
-        }
-        return false;
-    }
-
-
-    @Override
-    public int getIdAuthor(String nameAuthor) {
-        final SqlParameterSource namedParameters = new MapSqlParameterSource("nameAuthor", nameAuthor);
-        int idAuthor = 0;
-        try {
-            idAuthor = jdbc.queryForObject(SEARCH_AUTHOR_ID_BY_NAME, namedParameters, Integer.class);
-        } catch (EmptyResultDataAccessException e) {
-            if (log.isDebugEnabled()) {
-                log.debug(e.toString());
-            }
-            insertAuthor(nameAuthor);
-            return getIdAuthor(nameAuthor);
-        }
-        return idAuthor;
-    }
-
-    @Override
-    public void insertAuthor(String nameAuthor) {
-        final SqlParameterSource namedParameters = new MapSqlParameterSource("nameAuthor", nameAuthor);
-        jdbc.update(INSERT_AUTHOUR, namedParameters);
-    }
-
-    @Override
-    public int getIdGenre(String nameGenre) {
-        final SqlParameterSource namedParameters = new MapSqlParameterSource("nameGenre", nameGenre);
-        int idGenre = 0;
-        try {
-            idGenre = jdbc.queryForObject(SELECT_GENRE_ID_BY_NAME, namedParameters, Integer.class);
-        } catch (EmptyResultDataAccessException e) {
-            if (log.isDebugEnabled()) {
-                log.debug(e.toString());
-            }
-            insertGenre(nameGenre);
-            return getIdGenre(nameGenre);
-        }
-        return idGenre;
-    }
-
-    @Override
-    public void insertGenre(String nameGenre) {
-        final SqlParameterSource namedParameters = new MapSqlParameterSource("nameGenre", nameGenre);
-        jdbc.update(INSERT_GENRE, namedParameters);
-    }
-
-    @Override
-    public int getCountBookByAuthor(int authorId) {
+    public int getCountBookByAuthor(long authorId) {
         final SqlParameterSource namedParameters = new MapSqlParameterSource("authorId", authorId);
         int countBookByIdAuthor = 0;
         countBookByIdAuthor = jdbc.queryForObject(SEARCH_BOOK_BY_AUTHOR_ID, namedParameters, Integer.class);
@@ -197,11 +125,12 @@ public class BookDaoJdbc implements BookDao {
     }
 
     @Override
-    public int getCountBookByGenre(int genreId) {
+    public int getCountBookByGenre(long genreId) {
         final SqlParameterSource namedParameters = new MapSqlParameterSource("genreId", genreId);
-        int countBookByIdGenre = 0;
-        countBookByIdGenre = jdbc.queryForObject(SEARCH_BOOK_BY_GENRE_ID, namedParameters, Integer.class);
-        return countBookByIdGenre;
+             int countBookByIdGenre = 0;
+             countBookByIdGenre = jdbc.queryForObject(SEARCH_BOOK_BY_GENRE_ID, namedParameters, Integer.class);
+             return countBookByIdGenre;
     }
+
 
 }
