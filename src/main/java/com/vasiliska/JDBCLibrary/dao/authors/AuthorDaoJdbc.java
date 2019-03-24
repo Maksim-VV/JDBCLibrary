@@ -14,9 +14,9 @@ public class AuthorDaoJdbc implements AuthorDao {
 
     private final NamedParameterJdbcOperations jdbc;
 
-    final String DELETE_AUTHOR = "delete from authors where authorId = :authorId";
-    final String INSERT_AUTHOUR = "insert into authors (`nameAuthor`) values (:nameAuthor);";
-    final String SEARCH_AUTHOR_ID_BY_NAME = "select authorId from authors where nameAuthor = :nameAuthor";
+    private final String DELETE_AUTHOR = "delete from authors where authorId = :authorId";
+    private final String INSERT_AUTHOUR = "insert into authors (`nameAuthor`) values (:nameAuthor);";
+    private final String SEARCH_AUTHOR_ID_BY_NAME = "select authorId from authors where nameAuthor = :nameAuthor";
 
     public AuthorDaoJdbc(NamedParameterJdbcOperations jdbcOperations) {
         jdbc = jdbcOperations;

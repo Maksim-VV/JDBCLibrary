@@ -13,9 +13,9 @@ public class GenreDaoJdbc implements GenreDao {
 
     private final NamedParameterJdbcOperations jdbc;
 
-    final String DELETE_GENRE = "delete from genres where genreId = :genreId";
-    final String INSERT_GENRE = "insert into genres (`nameGenre`) values (:nameGenre);";
-    final String SELECT_GENRE_ID_BY_NAME = "select genreId from genres where nameGenre = :nameGenre";
+    private final String DELETE_GENRE = "delete from genres where genreId = :genreId";
+    private final String INSERT_GENRE = "insert into genres (`nameGenre`) values (:nameGenre);";
+    private final String SELECT_GENRE_ID_BY_NAME = "select genreId from genres where nameGenre = :nameGenre";
 
     public GenreDaoJdbc(NamedParameterJdbcOperations jdbcOperations) {
         jdbc = jdbcOperations;
@@ -25,20 +25,32 @@ public class GenreDaoJdbc implements GenreDao {
     @Override
     public boolean delGenre(long genreId) {
         SqlParameterSource namedParameters = new MapSqlParameterSource("genreId", genreId);
-        int status = jdbc.update(DELETE_GENRE, namedParameters);
-        if (status != 0) {
-            return true;
+        boolean status = false;
+        try
+        {
+            if(jdbc.update(DELETE_GENRE, namedParameters) != 0)
+            {
+                status = true;
+            }
         }
-        return false;
+        catch(EmptyResultDataAccessException e)
+        {
+            status = false;
+        }
+
+        return status;
     }
 
     @Override
     public long getIdGenre(String nameGenre) {
         final SqlParameterSource namedParameters = new MapSqlParameterSource("nameGenre", nameGenre);
         long idGenre = 0;
-        try {
+        try
+        {
             idGenre = jdbc.queryForObject(SELECT_GENRE_ID_BY_NAME, namedParameters, Long.class);
-        } catch (EmptyResultDataAccessException e) {
+        }
+        catch (EmptyResultDataAccessException e)
+        {
             if (log.isDebugEnabled()) {
                 log.debug(e.toString());
             }

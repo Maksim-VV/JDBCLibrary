@@ -1,35 +1,29 @@
-package com.vasiliska.JDBCLibrary.dao;
+package com.vasiliska.JDBCLibrary.domain;
 
+import com.vasiliska.JDBCLibrary.dao.authors.AuthorDao;
 import com.vasiliska.JDBCLibrary.dao.authors.AuthorDaoJdbc;
 import com.vasiliska.JDBCLibrary.dao.books.BookDaoJdbc;
-import com.vasiliska.JDBCLibrary.dao.genres.GenreDaoJdbc;
-import com.vasiliska.JDBCLibrary.domain.Author;
-import com.vasiliska.JDBCLibrary.domain.Book;
-import com.vasiliska.JDBCLibrary.domain.Genre;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
+
 
 @RunWith(SpringRunner.class)
 @JdbcTest
-@Import({BookDaoJdbc.class, AuthorDaoJdbc.class, GenreDaoJdbc.class})
-@TestPropertySource(properties = {"spring.datasource.schema=classpath:testschema.sql"})
-public class daoJdbcTest {
+@Import({BookDaoJdbc.class, AuthorDaoJdbc.class})
+public class BookTest {
 
     @Autowired
     private BookDaoJdbc bookDao;
 
     @Autowired
-    private AuthorDaoJdbc authorDao;
-    @Autowired
-    private GenreDaoJdbc genreDao;
+    private AuthorDao authorDao;
+    private final String TEST_BOOK_NAME = "Преступление и наказание";
 
     @Test
     public void testContext() {
@@ -39,14 +33,14 @@ public class daoJdbcTest {
     @Test
     public void getAllBooks() {
         assertEquals(bookDao.getAllBooks().size(), 1);
-        assertEquals(bookDao.getAllBooks().get(0).getName(), "Преступление и наказание");
+        assertEquals(bookDao.getAllBooks().get(0).getName(), TEST_BOOK_NAME);
         assertEquals(bookDao.getAllBooks().get(0).getAuthor().getAuthorName(), "Достоевский");
         assertEquals(bookDao.getAllBooks().get(0).getGenre().getGenreName(), "Драма");
     }
 
-    @Test
+   @Test
     public void insertBookTest() {
-        String newNameBook =  "Му-му";
+        String newNameBook = "Му-му";
         Author author = new Author(2, "Тургенев");
         authorDao.insertAuthor("Тургенев");
         Genre genre = new Genre(1, "Драма");
@@ -56,15 +50,25 @@ public class daoJdbcTest {
         assertEquals(bookDao.getAllBooks().get(1).getName(), newNameBook);
     }
 
-    @Test
-    public void getCountBookByAuthor() {
-        assertEquals(bookDao.getCountBookByAuthor(1), 1);
-        assertEquals(bookDao.getCountBookByAuthor(3), 0);
+   @Test
+    public void getIdName() {
+       assertEquals(bookDao.getBookByName(TEST_BOOK_NAME).getId(), 1);
     }
 
     @Test
-    public void getCountBookByGenre() {
-        assertEquals(bookDao.getCountBookByGenre(1), 1);
-        assertEquals(bookDao.getCountBookByGenre(2), 0);
+    public void getGenre() {
+        assertEquals(bookDao.getBookByGenre("Драма").get(0).getName(), TEST_BOOK_NAME);
     }
+
+    @Test
+    public void getAuthor() {
+        assertEquals(bookDao.getBookByAuthor("Достоевский").get(0).getName(),TEST_BOOK_NAME);
+    }
+
+    @Test
+    public void delBookTest() {
+        assertFalse(bookDao.delBook("Собачье сердце"));
+        assertTrue(bookDao.delBook(TEST_BOOK_NAME));
+    }
+
 }

@@ -4,11 +4,10 @@ import lombok.Data;
 
 @Data
 public class Book {
-    long id;
-    String name;
-
-    Genre genre;
-    Author author;
+    private long id;
+    private String name;
+    private Genre genre;
+    private Author author;
 
     public Book(long id, String name, Author author, Genre genre) {
         this.id = id;

@@ -13,13 +13,10 @@ public class BookMapper implements RowMapper<Book> {
     public Book mapRow(ResultSet resultSet, int i) throws SQLException {
         long id = resultSet.getLong("id");
         String name = resultSet.getString("name");
-
         long authorId = resultSet.getLong("authorId");
         String nameAuthor = resultSet.getString("nameAuthor");
-
         long genreId = resultSet.getLong("genreId");
         String nameGenre = resultSet.getString("nameGenre");
-
         return new Book(id, name, new Author(authorId,nameAuthor),new Genre(genreId,nameGenre));
     }
 }

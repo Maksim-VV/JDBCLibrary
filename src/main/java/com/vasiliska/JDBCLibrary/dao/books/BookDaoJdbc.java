@@ -17,35 +17,35 @@ import java.util.List;
 public class BookDaoJdbc implements BookDao {
 
     private final NamedParameterJdbcOperations jdbc;
-    final String INSERT_BOOK = "insert into books (`name`,`authorId`, `genreId`) values (:nameBook,:authorId,:genreId);";
+    private final String INSERT_BOOK = "insert into books (`name`,`authorId`, `genreId`) values (:nameBook,:authorId,:genreId);";
 
-    final String SELECT_ALL_BOOK = "SELECT b.id, b.name, b.authorId, b.genreId , at.nameAuthor, g.nameGenre \n" +
+    private final String SELECT_ALL_BOOK = "SELECT b.id, b.name, b.authorId, b.genreId , at.nameAuthor, g.nameGenre \n" +
             " FROM BOOKS b,AUTHORS at, GENRES g \n" +
             "WHERE b.authorId = at.authorId\n" +
             "AND b.genreId  = g.genreId ";
 
-    final String SEARCH_BOOK_BY_NAME = "SELECT b.id, b.name, b.authorId, b.genreId , at.nameAuthor, g.nameGenre \n" +
+    private final String SEARCH_BOOK_BY_NAME = "SELECT b.id, b.name, b.authorId, b.genreId , at.nameAuthor, g.nameGenre \n" +
             "             FROM BOOKS b,AUTHORS at, GENRES g \n" +
             "            WHERE b.authorId = at.authorId\n" +
             "            AND b.genreId  = g.genreId \n" +
             "AND b.name = :nameBook";
 
-    final String SEARCH_BOOK_BY_AUTHOR = "SELECT b.id, b.name, b.authorId, b.genreId , at.nameAuthor, g.nameGenre \n" +
+    private final String SEARCH_BOOK_BY_AUTHOR = "SELECT b.id, b.name, b.authorId, b.genreId , at.nameAuthor, g.nameGenre \n" +
             "             FROM BOOKS b,AUTHORS at, GENRES g \n" +
             "            WHERE b.authorId = at.authorId\n" +
             "            AND b.genreId  = g.genreId \n" +
             "AND at.nameAuthor = :nameAuthor";
 
-    final String SEARCH_BOOK_BY_GENRE = "SELECT b.id, b.name, b.authorId, b.genreId , at.nameAuthor, g.nameGenre \n" +
+    private final String SEARCH_BOOK_BY_GENRE = "SELECT b.id, b.name, b.authorId, b.genreId , at.nameAuthor, g.nameGenre \n" +
             "             FROM BOOKS b,AUTHORS at, GENRES g \n" +
             "            WHERE b.authorId = at.authorId\n" +
             "            AND b.genreId  = g.genreId \n" +
             "AND g.nameGenre = :nameGenre";
 
-    final String SEARCH_BOOK_BY_AUTHOR_ID = "select count(*) from books where authorId = :authorId";
-    final String SEARCH_BOOK_BY_GENRE_ID = "select count(*) from books where genreId = :genreId";
+    private final String SEARCH_BOOK_BY_AUTHOR_ID = "select count(*) from books where authorId = :authorId";
+    private final String SEARCH_BOOK_BY_GENRE_ID = "select count(*) from books where genreId = :genreId";
 
-    final String DELETE_BOOK = "delete from books where name = :nameBook";
+    private final String DELETE_BOOK = "delete from books where name = :nameBook";
 
     public BookDaoJdbc(NamedParameterJdbcOperations jdbcOperations) {
         jdbc = jdbcOperations;

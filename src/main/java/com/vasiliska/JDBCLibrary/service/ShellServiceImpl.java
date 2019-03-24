@@ -28,6 +28,10 @@ public class ShellServiceImpl implements ShellService {
         this.dao = dao;
     }
 
+    public ShellServiceImpl() {
+
+    }
+
 
     @Override
     public String addBook(String bookName, String author, String genre) {
