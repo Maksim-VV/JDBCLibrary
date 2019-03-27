@@ -29,9 +29,7 @@ public class ShellServiceImpl implements ShellService {
     }
 
     public ShellServiceImpl() {
-
     }
-
 
     @Override
     public String addBook(String bookName, String author, String genre) {
@@ -52,7 +50,7 @@ public class ShellServiceImpl implements ShellService {
     @Override
     public String bookByName(String bookName) {
         Book book = searchBook(bookName);
-        if (book.getName().isEmpty()) {
+        if (book==null || book.getName().isEmpty()) {
             return "Нет такой книги!";
         }
         return book.toString();
@@ -108,7 +106,6 @@ public class ShellServiceImpl implements ShellService {
         Book book = dao.getBookByName(name);
 
         if (book == null || book.getName().isEmpty()) {
-            System.out.println("Нет такой книги!");
             return false;
         }
         val countAuthor = dao.getCountBookByAuthor(book.getAuthor().getAuthorId());

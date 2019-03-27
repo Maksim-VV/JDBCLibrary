@@ -22,4 +22,6 @@ public interface BookDao {
     int getCountBookByAuthor(long authorId);
 
     int getCountBookByGenre(long genreId);
+
+    public int deleteBooksAll();
 }

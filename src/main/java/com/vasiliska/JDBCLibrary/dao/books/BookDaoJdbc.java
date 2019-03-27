@@ -132,5 +132,11 @@ public class BookDaoJdbc implements BookDao {
              return countBookByIdGenre;
     }
 
+    @Override
+        public int deleteBooksAll() {
+        jdbc.getJdbcOperations().update("DELETE FROM books");
+            return jdbc.getJdbcOperations().update("DELETE FROM genres");
+        }
+
 
 }
